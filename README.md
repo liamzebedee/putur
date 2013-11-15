@@ -7,7 +7,9 @@ Putur generates statistically similar words to a corpus and puts them in a phras
 The idea is simple: instead of using words to generate statistically similar sentences, I use letters to generate statistically similar words to the corpus. I've supplied the contents of Obama's re-election speech from 2012 as a default corpus for the algorithm. Here are some examples:
 
 > diblis their voicaught yeance lonever we re lover wit a com as abled I've warick me Stand tracho mationget not of hose ample fat
+
 > he of fory cand come the theal cy Ame re. Thattenthroole, not ma goince. Ton 200 youghted ismovervidestry fork on oureed ide fo
+
 > on of thethe will publeyour of to do jus than ought. I witin figace st yought. I heir of your thatin thromner cy haver def your
 
 ## Notes
