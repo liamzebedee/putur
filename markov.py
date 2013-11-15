@@ -3,65 +3,47 @@ import random
 class MarkovTextGenerator(object):
 	def __init__(self, text):
 		self.text = text
-		self.words = self.processWords()
-		self.cache = self.generateCache()
-
-	# Takes self.text and yeah...
-	def processWords(self):
-		self.words = []
-		
-		for char in self.text:
-			self.words.append(char)
-		
-		return self.words
+		self.characters = [char for char in self.text]
+		if len(self.characters) < 3: raise Exception("At least 3 characters needed in text")
+		self.createMatrix()
 	
-	def triples(self):
-			""" Generates triples from the given data string. So if our string were
-							"What a lovely day", we'd generate (What, a, lovely) and then
-							(a, lovely, day).
-			"""
-
-			if len(self.words) < 3:
-					return
-
-			for i in range(len(self.words) - 2):
-					yield (self.words[i], self.words[i+1], self.words[i+2])
-
+	def characterTriples(self):
+		""" Generates triples from the given data string. So if our string were
+			"dogs", we'd generate (d, o, g) and then
+			(o, g, s).
+		"""
+		for i in range(len(self.characters) - 2):
+			yield (self.characters[i], self.characters[i+1], self.characters[i+2])
 	
-	def generateCache(self):
-		self.cache = {}
-		for w1, w2, w3 in self.triples():
-			key = (w1, w2)
-			if key in self.cache:
-				self.cache[key].append(w3)
+	def createMatrix(self):
+		self.matrix = {}
+		for char1, char2, char3 in self.characterTriples():
+			key = (char1, char2)
+			if key in self.matrix:
+				self.matrix[key].append(char3)
 			else:
-				self.cache[key] = [w3]
+				self.matrix[key] = [char3]
 
-		return self.cache
-	
-	def generateTextFromRandomWord(self, size=10):
-		seed = random.randrange(0, len(self.words) - 3)
-		seed_word, next_word = self.words[seed], self.words[seed+1]
-
-		w1, w2 = seed_word, next_word
-		gen_words = []
-		spaceCnt = 0
-		for i in xrange(size):
+	def generate(self, textLength=10):
+		seed = random.randrange(0, len(self.characters) - 3)
+		seed_char, next_char = self.characters[seed], self.characters[seed + 1]
+		
+		generated_text = []
+		spaceCount = 0
+		char1, char2 = seed_char, next_char
+		for i in range(textLength):
 			j = 0
-			while spaceCnt != 2:
-				if j == 14: break
+			while spaceCount != 2:
+				if j == 13: break
 				j += 1
-				gen_words.append(w1)
-				w1, w2 = w2, random.choice(self.cache[(w1, w2)])
-				if w2 == ' ': spaceCnt += 1
-				else: spaceCnt = 0
-		gen_words.append(w2)
-		#print(str(gen_words))
-		return ''.join(gen_words)
+				generated_text.append(char1)
+				char1, char2 = char2, random.choice(self.matrix[(char1, char2)])
+				if char2 == ' ': spaceCount += 1
+				else: spaceCount = 0
+		
+		return ''.join(generated_text)
 
-f = open('text.txt')
-f.seek(0)
-data = f.read()
-
-markov = MarkovTextGenerator(data)
-print(markov.generateTextFromRandomWord())
+if __name__ == "__main__":
+	corpus = open('text.txt').read()
+	markov = MarkovTextGenerator(corpus)
+	print(markov.generate())
